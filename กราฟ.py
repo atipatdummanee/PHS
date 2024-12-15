@@ -17,7 +17,6 @@ cursor.execute('''
 SELECT
   THProvince,
   COUNT(*) AS ทั้งหมด,
-  COUNT(CASE WHEN TitleName LIKE "%พระ%" THEN 1 END) AS Monk,
   COUNT(CASE WHEN SEX  LIKE '%ชาย%'  THEN 1 END) AS M,
   COUNT(CASE WHEN SEX  NOT LIKE '%ชาย%'  THEN 1 END) AS F
 FROM

@@ -55,5 +55,3 @@ ax.set_title('การเปรียบเทียบจำนวนฆาร
 plt.tight_layout()
 plt.show()
 
-
-()
