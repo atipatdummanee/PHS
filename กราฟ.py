@@ -5,12 +5,12 @@ import matplotlib.pyplot as plt
 # เชื่อมต่อฐานข้อมูล
 connection = mysql.connector.connect(
     host="localhost",
-    user="myuser",
-    password="mypassword",
-    database="mydb"  # เปลี่ยนเป็นชื่อฐานข้อมูลของคุณ
+    user="root",
+    password="rootpassword",
+    database="mysql-docker"  # เปลี่ยนเป็นชื่อฐานข้อมูลของคุณ
 )
 
-
+plt.rcParams['font.family']='tahoma'
 cursor = connection.cursor()
 
 cursor.execute('''
@@ -44,7 +44,7 @@ print(df)
 
 
 # แสดงข้อมูลที่ดึงมา
-print(df)
+
 
 # สร้างกราฟ
 labels = df['THProvince']
