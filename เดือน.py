@@ -1,59 +1,59 @@
-import mysql.connector
 import pandas as pd
-
-
+import matplotlib.pyplot as plt
+from sqlalchemy import create_engine
 
 # ตั้งค่าฟอนต์สำหรับภาษาไทย
-#plt.rcParams['font.family']='tahoma'
+plt.rcParams['font.family']='tahoma'
 
 # การเชื่อมต่อ MySQL
+username = 'root'
+password = 'rootpassword'
+host = 'localhost'
+database = 'mysql-docker'
+connection_string = f"mysql+mysqlconnector://{username}:{password}@{host}/{database}"
+engine = create_engine(connection_string)
 
-connection = mysql.connector.connect(
-    host="localhost",
-    user="root",
-    password="rootpassword",
-    database="mysql-docker"
-)
+# SQL Query
+query = '''
+SELECT
+    MONTH(Service_Date) AS month, 
+    COUNT(CASE WHEN TitleName IN ('นาย ','หญิง','นายแพทย์','แพทย์หญิง','นางสาว','ว่าที่ร้อยตรีหญิง')THEN 1  END) AS layperson,  
+    COUNT(CASE WHEN TitleName IN ('พระภิกษุ ','พระมหา','พระปลัด','พระครูสมุห์','พระอธิการ','พระครูใบฎีกา','พระครูสังฆรักษ์','พระครูวนัยธร','สามเณร')THEN 1  END) AS Monk 
+FROM clinicvisit
+WHERE Service_Date BETWEEN '2020-01-01' AND '2024-12-31'
+GROUP BY month
+ORDER BY month
+'''
 
+# ดึงข้อมูลจาก MySQL
+df = pd.read_sql(query, engine)
 
+# ปิดการเชื่อมต่อ
+engine.dispose()
 
-# แสดงข้อมูลที่ดึงมา
+# ตรวจสอบข้อมูลที่ดึงมา
 print(df)
 
-# สร้างกราฟ
-labels = df['THProvince']
-male_counts = df['male']
-female_counts = df['female']
+# สร้างกราฟวงกลม
+labels = df['month']  # หมายถึงเดือนที่ทำการแยก
+layperson_counts = df['layperson']  # จำนวนฆารวาส
+monk_counts = df['Monk']  # จำนวนพระ
 
-# ความกว้างของกราฟแท่ง
-bar_width = 0.35
+# รวมจำนวนฆารวาสและพระ
+total_counts = layperson_counts + monk_counts
 
-# กำหนดตำแหน่งสำหรับกราฟแท่ง
-index = range(len(labels))
+# สร้างกราฟวงกลมแยกฆารวาสและพระ
+fig, ax = plt.subplots(figsize=(8, 8))  # ขนาดของกราฟ
 
-# สร้างกราฟแท่ง
-fig, ax = plt.subplots(figsize=(10, 6))
+# ใช้ autopct ในการแสดงเป็นจำนวนเต็ม
+ax.pie(total_counts, labels=labels, autopct=lambda p: f'{int(p * sum(total_counts) / 100)}', startangle=90, colors=['blue', 'pink'], textprops={'fontsize': 12, 'fontfamily': 'tahoma'})
 
-bar1 = ax.bar(index, male_counts, bar_width, label='ผู้ชาย', color='blue')
-bar2 = ax.bar([p + bar_width for p in index], female_counts, bar_width, label='ผู้หญิง', color='pink')
-
-# เพิ่มข้อมูลที่แสดงบนแท่ง
-ax.bar_label(bar1)
-ax.bar_label(bar2)
-
-# ตั้งชื่อกราฟและแกน
-ax.set_xlabel('กลุ่ม')
-ax.set_ylabel('จำนวน')
-ax.set_title('การเปรียบเทียบจำนวนผู้ชายและผู้หญิงในแต่ละกลุ่ม')
-
-# ตั้งค่าตำแหน่งของ label บนแกน X
-ax.set_xticks([p + bar_width / 2 for p in index])
-ax.set_xticklabels(labels)
-
-# เพิ่มกริด, ตาราง และคำอธิบาย
-ax.legend()
-ax.grid(True)
+# ชื่อกราฟ
+ax.set_title('การเปรียบเทียบจำนวนฆารวาสและพระในแต่ละเดือน')
 
 # แสดงกราฟ
 plt.tight_layout()
 plt.show()
+
+
+()
