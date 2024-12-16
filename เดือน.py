@@ -1,3 +1,4 @@
+import mysql.connector
 import pandas as pd
 import matplotlib.pyplot as plt
 from sqlalchemy import create_engine
@@ -34,8 +35,17 @@ engine.dispose()
 # ตรวจสอบข้อมูลที่ดึงมา
 print(df)
 
+# สร้างลิสต์ของชื่อเดือนในภาษาไทย
+thai_months = [
+    "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน",
+    "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"
+]
+
+# แปลงเดือนจากตัวเลขเป็นชื่อเดือนในภาษาไทย
+df['month_th'] = df['month'].apply(lambda x: thai_months[x - 1])
+
 # สร้างกราฟวงกลม
-labels = df['month']  # หมายถึงเดือนที่ทำการแยก
+labels = df['month_th']  # ชื่อเดือนในภาษาไทย
 layperson_counts = df['layperson']  # จำนวนฆารวาส
 monk_counts = df['Monk']  # จำนวนพระ
 
@@ -54,4 +64,3 @@ ax.set_title('การเปรียบเทียบจำนวนฆาร
 # แสดงกราฟ
 plt.tight_layout()
 plt.show()
-
