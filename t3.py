@@ -12,7 +12,7 @@ plt.rcParams['font.family'] = 'tahoma'
 username = 'root'
 password = 'rootpassword'
 host = 'localhost'
-database = 'mysql-docker'
+database = 'mydb'
 connection_string = f"mysql+mysqlconnector://{username}:{password}@{host}/{database}"
 engine = create_engine(connection_string)
 

@@ -7,7 +7,7 @@ connection = mysql.connector.connect(
     host="localhost",
     user="root",
     password="rootpassword",
-    database="mysql-docker"  # เปลี่ยนเป็นชื่อฐานข้อมูลของคุณ
+    database="mydb"  # เปลี่ยนเป็นชื่อฐานข้อมูลของคุณ
 )
 
 plt.rcParams['font.family']='tahoma'
